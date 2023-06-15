@@ -3,6 +3,7 @@
 # @see https://github.com/salesforce/BLIP/
 #
 # If you run this in terminal make sure to:
+# pip install torch=='1.12.1+cu113' 'torchvision==0.13.1+cu113' --extra-index-url https://download.pytorch.org/whl/cu113
 # pip3 install transformers==4.15.0 timm==0.4.12 fairscale==0.4.4
 # git clone https://github.com/salesforce/BLIP
 # cd /root/BLIP
@@ -26,6 +27,8 @@ from models.blip import blip_decoder
 # If you have no super large images, this can be commented out
 ##
 Image.MAX_IMAGE_PIXELS = 10000000000000000000000000  # Set a maximum image size (e.g., 1 billion pixels)
+device = torch.device('cuda' if torch.cuda.is_available() else 'cpu')
+image_size = 384
 def load_images(image_file, image_size, device):
     raw_image = Image.open(image_file).convert('RGB')
 
@@ -44,8 +47,6 @@ def load_images(image_file, image_size, device):
 ## 
 # Define device, load the model (see SalesForce doc for more models), and define the source image path
 ##
-image_size = 384
-device = 'cuda'  # Assuming you want to use GPU for processing
 model_url = 'https://storage.googleapis.com/sfr-vision-language-research/BLIP/models/model_base_caption_capfilt_large.pth'
 model = blip_decoder(pretrained=model_url, image_size=image_size, vit='base')
 model.eval()
