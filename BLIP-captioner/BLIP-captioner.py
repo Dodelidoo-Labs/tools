@@ -42,8 +42,10 @@ def load_images(image_file, image_size, device):
     return image
 
 ## 
-# Load the model (see SalesForce doc for more models), and define the source image path
+# Define device, load the model (see SalesForce doc for more models), and define the source image path
 ##
+image_size = 384
+device = 'cuda'  # Assuming you want to use GPU for processing
 model_url = 'https://storage.googleapis.com/sfr-vision-language-research/BLIP/models/model_base_caption_capfilt_large.pth'
 model = blip_decoder(pretrained=model_url, image_size=image_size, vit='base')
 model.eval()
