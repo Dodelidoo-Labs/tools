@@ -2,6 +2,17 @@ import os
 import re
 import yaml
 
+def delete_files_with_dot(folder):
+    deleted_files = []
+    for root, dirs, files in os.walk(folder):
+        for file_name in files:
+            file_path = os.path.join(root, file_name)
+            if file_name.startswith('.'):
+                os.remove(file_path)
+                deleted_files.append(file_path)
+
+    return deleted_files
+
 def check_image_txt_files(folder):
     errors = []
     for root, dirs, files in os.walk(folder):
@@ -111,3 +122,6 @@ if errors:
         print(error)
 else:
     print("Validation successful. No errors found.")
+
+delete_files_with_dot(folder_path)
+print("hidden files deleted")
