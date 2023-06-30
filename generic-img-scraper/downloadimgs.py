@@ -34,7 +34,7 @@ async def process_url(session, url):
 
 async def main():
     os.makedirs("imgs", exist_ok=True)
-    url = "Insert base URL here"
+    url = "https://boombo.biz/en/naked-girls/56670-harem-nudes.html"
     async with aiohttp.ClientSession() as session:
         await process_url(session, url)
 

@@ -41,8 +41,16 @@ def replace_double_colons(input_string):
     modified_string = input_string.replace("::", ":")
     return modified_string
 
+def remove_after_second_hashtag(text):
+    hashtags = text.split("**")
+    if len(hashtags) >= 3:
+        new_text = '**'.join(hashtags[:2])
+        return new_text
+    return text
+
 def clean_data(input_file, output_file, progress_queue):
-    with open(input_file, 'r') as file:
+
+    with open(input_file, 'r', errors='ignore') as file:
         reader = csv.reader(file)
         data = list(reader)
 
@@ -52,32 +60,34 @@ def clean_data(input_file, output_file, progress_queue):
         progress_queue.put(progress)
 
         prompt = row[0]
+
         # Remove double asterisks (**) from the first column
+        prompt = remove_after_second_hashtag(prompt)
         prompt = prompt.replace('**', '')
 
         # Remove text after the first double dash (--)
-        double_dash_index = prompt.find('--')
-        if double_dash_index != -1:
-            prompt = prompt[:double_dash_index]
-            prompt = prompt.replace('--', '')
+        #double_dash_index = prompt.find('--')
+        #if double_dash_index != -1:
+            #prompt = prompt[:double_dash_index]
+            #prompt = prompt.replace('--', '')
 
         # Remove text after the Image # occurrence
-        image_string_index = prompt.find('- Image')
-        if image_string_index != -1:
-            prompt = prompt[:image_string_index]
-            prompt = prompt.replace('- Image', '')
+        #image_string_index = prompt.find('- Image')
+        #if image_string_index != -1:
+            #prompt = prompt[:image_string_index]
+            #prompt = prompt.replace('- Image', '')
 
         # Remove text after the Image # occurrence
-        upscaled_string_index = prompt.find('- Upscaled')
-        if upscaled_string_index != -1:
-            prompt = prompt[:upscaled_string_index]
-            prompt = prompt.replace('- Upscaled', '')
+        #upscaled_string_index = prompt.find('- Upscaled')
+        #if upscaled_string_index != -1:
+            #prompt = prompt[:upscaled_string_index]
+            #prompt = prompt.replace('- Upscaled', '')
 
         # Normalise weights
-        prompt = normalize_numbers_in_string(prompt)
+        #prompt = normalize_numbers_in_string(prompt)
 
         # Replace double colons
-        prompt = replace_double_colons(prompt)
+        #prompt = replace_double_colons(prompt)
 
         # Replace link pointers and Prompt text
         prompt = prompt.replace("Prompt", "")
