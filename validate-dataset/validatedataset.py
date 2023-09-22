@@ -1,6 +1,7 @@
 import os
 import re
 import yaml
+import glob
 
 def delete_files_with_dot(folder):
     deleted_files = []
@@ -17,7 +18,7 @@ def check_image_txt_files(folder):
     errors = []
     for root, dirs, files in os.walk(folder):
         for file in files:
-            if file.lower().endswith(('.jpg', '.png')):
+            if file.lower().endswith(('.jpg', '.jpeg', '.png', '.gif', '.webp', '.tiff', '.bmp')):
                 image_file = os.path.join(root, file)
                 txt_file = os.path.join(root, os.path.splitext(file)[0] + '.txt')
                 
@@ -28,14 +29,33 @@ def check_image_txt_files(folder):
     
     return errors
 
+def check_txt_image_files(folder):
+    errors = []
+    image_extensions = ['.jpg', '.jpeg', '.png', '.gif', '.webp', '.tiff', '.bmp']  # Add or remove image extensions as needed
+    
+    for root, dirs, files in os.walk(folder):
+        for file in files:
+            if file.lower().endswith('.txt'):
+                txt_file = os.path.join(root, file)
+                image_basename = os.path.splitext(txt_file)[0]
+                
+                # Find any image file that matches the basename
+                image_files = [img for img in glob.glob(image_basename + '*') if os.path.splitext(img)[1] in image_extensions]
+                
+                if not image_files:  # If no image files were found, add to errors
+                    errors.append(f"Missing image for txt file: {txt_file}")
+    
+    return errors
+
 def check_txt_file_count(folder):
     errors = []
     for root, dirs, files in os.walk(folder):
         txt_files = [file for file in files if file.lower().endswith('.txt')]
-        image_files = [file.lower() for file in files if file.lower().endswith(('.jpg', '.png'))]
+        image_files = [file.lower() for file in files if file.lower().endswith(('.jpg', '.jpeg', '.png', '.gif', '.webp', '.tiff', '.bmp', '.JPG', '.JPEG', '.PNG', '.GIF', '.WEBP', '.TIFF', '.BMP'))]
         
         if len(txt_files) != len(image_files):
-            errors.append(f"Inconsistent number of text files in folder: {root}")
+            diff = len(txt_files) - len(image_files)
+            errors.append(f"Inconsistent number of text files in folder: {root}. Difference: {diff}")
     
     return errors
 
@@ -114,6 +134,7 @@ errors.extend(check_txt_file_count(folder_path))
 errors.extend(check_yaml_files(folder_path))
 errors.extend(check_folder_names(folder_path))
 errors.extend(check_folder_structure(folder_path))
+errors.extend(check_txt_image_files(folder_path))
 
 # Print the list of errors
 if errors:

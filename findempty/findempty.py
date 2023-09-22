@@ -17,5 +17,6 @@ if empty_files:
     print("Empty files found:")
     for file in empty_files:
         print(file)
+        #os.remove(file)
 else:
     print("No empty files found.")
